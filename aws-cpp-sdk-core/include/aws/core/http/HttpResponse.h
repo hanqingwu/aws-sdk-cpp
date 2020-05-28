@@ -211,6 +211,8 @@ namespace Aws
              * Gets the response body of the response.
              */
             virtual Aws::IOStream& GetResponseBody() const = 0;
+
+            virtual void  RenewStream() = 0;
             /**
              * Gives full control of the memory of the ResponseBody over to the caller. At this point, it is the caller's
              * responsibility to clean up this object.

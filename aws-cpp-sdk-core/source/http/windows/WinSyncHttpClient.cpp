@@ -211,9 +211,10 @@ bool WinSyncHttpClient::BuildSuccessResponse(const Aws::Http::HttpRequest& reque
 
     if (request.GetMethod() != HttpMethod::HTTP_HEAD)
     {
-        char body[1024];
+        char body[1024 * 40];
         uint64_t bodySize = sizeof(body);
         int64_t numBytesResponseReceived = 0;
+        int64_t numBytesCount = 0;
         read = 0;
 
         bool success = ContinueRequest(request);
@@ -224,6 +225,7 @@ bool WinSyncHttpClient::BuildSuccessResponse(const Aws::Http::HttpRequest& reque
             if (read > 0)
             {
                 numBytesResponseReceived += read;
+                numBytesCount += read;
                 if (readLimiter != nullptr)
                 {
                     readLimiter->ApplyAndPayForCost(read);
@@ -232,6 +234,12 @@ bool WinSyncHttpClient::BuildSuccessResponse(const Aws::Http::HttpRequest& reque
                 if (receivedHandler)
                 {
                     receivedHandler(&request, response.get(), (long long)read);
+                }
+
+                if (numBytesCount > 1024 * 1024 * 100)
+                {
+                    response->RenewStream();
+                    numBytesCount = 0;
                 }
             }
 

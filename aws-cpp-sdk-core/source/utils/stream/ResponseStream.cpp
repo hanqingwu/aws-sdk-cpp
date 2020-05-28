@@ -64,6 +64,17 @@ ResponseStream::~ResponseStream()
     ReleaseStream();
 }
 
+void ResponseStream::RenewStream()
+{
+    if (m_underlyingStream)
+    {
+        m_underlyingStream->flush();
+        Aws::Delete(m_underlyingStream);
+    }
+
+    m_underlyingStream = DefaultResponseStreamFactoryMethod();
+}
+
 void ResponseStream::ReleaseStream()
 {
     if (m_underlyingStream)

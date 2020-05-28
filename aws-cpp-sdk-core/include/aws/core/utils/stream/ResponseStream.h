@@ -56,6 +56,7 @@ namespace Aws
                 ResponseStream& operator=(ResponseStream&&);
                 ResponseStream& operator=(const ResponseStream&) = delete;
 
+                void  RenewStream();
                 /**
                  * Gives access to underlying stream, but keep in mind that this changes state of the stream
                  */
